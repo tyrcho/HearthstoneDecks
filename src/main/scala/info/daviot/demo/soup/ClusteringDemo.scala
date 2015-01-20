@@ -5,22 +5,22 @@ import com.apporiented.algorithm.clustering.AverageLinkageStrategy
 import scala.collection.JavaConversions._
 import com.apporiented.algorithm.clustering.visualization.DendrogramPanel
 import javax.swing.JFrame
+import scala.util.Random
 
 //see https://github.com/lbehnke/hierarchical-clustering-java
 object ClusteringDemo extends App {
-  val names = Array("O1", "O2", "O3", "O4", "O5", "O6")
+  val size = 2000
+  val names = (1 to size).map(_.toString).toArray
 
-  val distances = Array[Array[Double]](
-    Array(0, 1, 9, 7, 11, 14),
-    Array(1, 0, 4, 3, 8, 10),
-    Array(9, 4, 0, 9, 2, 8),
-    Array(7, 3, 9, 0, 6, 13),
-    Array(11, 8, 2, 6, 0, 10),
-    Array(14, 10, 8, 13, 10, 0))
+  val distances = Array.fill(size)(Array.fill(size)(Random.nextDouble))
 
   val alg = new DefaultClusteringAlgorithm
 
+  val start = System.nanoTime / 1000 / 1000
   val cluster = alg.performClustering(distances, names, new AverageLinkageStrategy)
+  val end = System.nanoTime / 1000 / 1000
+  val duration = end - start
+  println(s"$size in $duration ms")
 
   val dp = new DendrogramPanel
   dp.setModel(cluster)
