@@ -6,27 +6,36 @@ import scala.collection.JavaConversions._
 import com.apporiented.algorithm.clustering.visualization.DendrogramPanel
 import javax.swing.JFrame
 import scala.util.Random
+import javax.tools.Diagnostic
 
 //see https://github.com/lbehnke/hierarchical-clustering-java
 object ClusteringDemo extends App {
-  val size = 2000
+  val size = 200
   val names = (1 to size).map(_.toString).toArray
 
   val distances = Array.fill(size)(Array.fill(size)(Random.nextDouble))
 
-  val alg = new DefaultClusteringAlgorithm
+  ShowClusters.show(distances, names)
+}
 
-  val start = System.nanoTime / 1000 / 1000
-  val cluster = alg.performClustering(distances, names, new AverageLinkageStrategy)
-  val end = System.nanoTime / 1000 / 1000
-  val duration = end - start
-  println(s"$size in $duration ms")
+object ShowClusters {
+  def show(distances: Array[Array[Double]], names: Array[String]): Unit = {
+    val alg = new DefaultClusteringAlgorithm
 
-  val dp = new DendrogramPanel
-  dp.setModel(cluster)
+    val start = System.nanoTime / 1000 / 1000
+    val cluster = alg.performClustering(distances, names, new AverageLinkageStrategy)
+    val end = System.nanoTime / 1000 / 1000
+    val duration = end - start
+    println(s"${names.size} in $duration ms")
 
-  val f = new JFrame
-  f.setContentPane(dp)
-  f.setVisible(true)
-  f.pack()
+    val dp = new DendrogramPanel
+    dp.setModel(cluster)
+
+    val f = new JFrame
+    f.setContentPane(dp)
+    f.pack()
+    f.setVisible(true)
+    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+
+  }
 }
