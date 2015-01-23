@@ -8,11 +8,12 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import grizzled.slf4j.Logging
 import org.jsoup.nodes.Document
+import dispatch._
 // check also : http://www.gosugamers.net/hearthstone/decks
 object Parser extends App with Logging {
   val decks = Await.result(
     for {
-      urls <- UrlExtract.extractFrom("http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-10/")
+      urls <- UrlExtract.extractFrom("http://www.hearthstonetopdecks.com/deck-category/deck-class/druid/")
       decks <- Future.sequence(urls.map(DeckExtract.extractFrom))
     } yield decks, 1000.seconds)
 
@@ -29,11 +30,10 @@ object Parser extends App with Logging {
     def extractFrom(url: String): Future[T]
   }
 
-  def readUrl(url: String): Future[Document] = Future {
+  def readUrl(urlStr: String): Future[Document] = {
     debug(s"reading from $url")
-    val doc = Jsoup.connect(url).get
-    debug(s"read from $url")
-    doc
+    val svc = url(urlStr)
+    for (data <- Http(svc OK as.String)) yield Jsoup.parse(data)
   }
 
   object UrlExtract extends DataExtract[List[String]] {
