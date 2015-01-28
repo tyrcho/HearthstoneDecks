@@ -6,12 +6,17 @@ import info.daviot.scraper.DispatchUrlReader
 import scala.concurrent.Future
 import org.jsoup.nodes.Document
 import scala.concurrent.ExecutionContext.Implicits.global
+import info.daviot.scraper.FileCache
+import info.daviot.scraper.AsyncCache
+import info.daviot.scraper.DispatchUrlReader
+import info.daviot.scraper.DataParser
+import info.daviot.scraper.LinksParser
 
-trait DispatchJsoupScraper extends Scraper {
-  def read(id: Id): Future[String] = 
-    DispatchUrlReader.read(id)
-  
-  def parseDocument(doc: String): Future[Document] =
-    Future(Jsoup.parse(doc))
-
-}
+abstract class DispatchJsoupScraper[Data](
+  dataParser: DataParser[String, Data],
+  linksParser: LinksParser[String],
+  cacheFolder: String)
+  extends Scraper[String, Data](
+    dataParser,
+    linksParser,
+    new DispatchUrlReader, new FileCache(cacheFolder)) 

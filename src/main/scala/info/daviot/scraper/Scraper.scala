@@ -12,13 +12,14 @@ import akka.util.Timeout
 import scala.util.Success
 import scala.util.Failure
 
-trait Scraper extends Logging {
-  type Id = String
-  type Data
+abstract class Scraper[Id, Data](
+  dataParser: DataParser[Id, Data],
+  linksParser: LinksParser[Id],
+  ioReader: Reader[Id, String],
+  cache: AsyncCache[Id, String]) extends Logging {
 
-  def read(id: Id): Future[String]
-  def extract(id: Id, content: String): Future[Option[Data]]
-  def links(content: String): Future[List[Id]]
+  def read(id: Id): Future[String] =
+    cache.withCache(ioReader.read)(id)
 
   val initial: Iterable[Id]
 
@@ -34,15 +35,18 @@ trait Scraper extends Logging {
       case Collect(id) =>
         val results = for {
           content <- read(id)
-          data <- extract(id, content)
-          next <- links(content)
+          data <- dataParser.extract(id, content)
+          next <- linksParser.extract(id, content)
         } yield (data, next)
         results.onComplete {
           case Success((data, next)) =>
             for (d <- data) {
               orchestrator ! DataFound(id, d)
             }
-            for (link <- next) { orchestrator ! Collect(link) }
+            for (link <- next) {
+              debug(s"Following link from $id to $link")
+              orchestrator ! Collect(link)
+            }
             orchestrator ! Done(id)
           case Failure(e) =>
             warn(s"could not process $id", e)
@@ -57,8 +61,8 @@ trait Scraper extends Logging {
     var client: ActorRef = _
     become {
       case Start(ids) =>
-        data=Map.empty
-        waiting=Set.empty
+        data = Map.empty
+        waiting = Set.empty
         client = sender
         for (id <- ids) {
           self ! Collect(id)
