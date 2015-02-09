@@ -14,51 +14,7 @@ trait Tables {
   import scala.slick.jdbc.{GetResult => GR}
   
   /** DDL for all tables. Call .create to execute. */
-  lazy val ddl = Actions.ddl ++ ActiveAdminComments.ddl ++ Activities.ddl ++ AdminUsers.ddl ++ Annoucements.ddl ++ Announcements.ddl ++ ArenaRunCards.ddl ++ ArenaRuns.ddl ++ Arenas.ddl ++ BlindDraftCards.ddl ++ BlindDrafts.ddl ++ Cards.ddl ++ CardSets.ddl ++ Comments.ddl ++ Constructeds.ddl ++ Conversations.ddl ++ Decks.ddl ++ DeckVersions.ddl ++ DelayedJobs.ddl ++ Impressions.ddl ++ Klasses.ddl ++ MatchDecks.ddl ++ Matches.ddl ++ MatchRanks.ddl ++ MatchResults.ddl ++ MatchRuns.ddl ++ MatchUniqueDecks.ddl ++ Modes.ddl ++ Notifications.ddl ++ Patches.ddl ++ Profiles.ddl ++ Races.ddl ++ Ranks.ddl ++ Rarities.ddl ++ Receipts.ddl ++ Roles.ddl ++ SchemaMigrations.ddl ++ Seasons.ddl ++ Sessions.ddl ++ ShortenedUrls.ddl ++ Subscriptions.ddl ++ Taggings.ddl ++ Tags.ddl ++ Teams.ddl ++ TeamUsers.ddl ++ Tournaments.ddl ++ TournDecks.ddl ++ Tournies.ddl ++ TournMatches.ddl ++ TournPairs.ddl ++ TournUsers.ddl ++ Types.ddl ++ UniqueDeckCards.ddl ++ UniqueDecks.ddl ++ UniqueDeckTypes.ddl ++ Users.ddl ++ UsersRoles.ddl
-  
-  /** Entity class storing rows of table Actions
-   *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
-   *  @param time Database column time DBType(INT), Default(None)
-   *  @param action Database column action DBType(VARCHAR), Length(255,true), Default(None)
-   *  @param card Database column card DBType(VARCHAR), Length(255,true), Default(None)
-   *  @param cardId Database column card_id DBType(INT), Default(None)
-   *  @param userId Database column user_id DBType(INT), Default(None)
-   *  @param matchId Database column match_id DBType(INT), Default(None)
-   *  @param createdAt Database column created_at DBType(DATETIME)
-   *  @param updatedAt Database column updated_at DBType(DATETIME) */
-  case class ActionsRow(id: Int, time: Option[Int] = None, action: Option[String] = None, card: Option[String] = None, cardId: Option[Int] = None, userId: Option[Int] = None, matchId: Option[Int] = None, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp)
-  /** GetResult implicit for fetching ActionsRow objects using plain SQL queries */
-  implicit def GetResultActionsRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[java.sql.Timestamp]): GR[ActionsRow] = GR{
-    prs => import prs._
-    ActionsRow.tupled((<<[Int], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp]))
-  }
-  /** Table description of table actions. Objects of this class serve as prototypes for rows in queries. */
-  class Actions(_tableTag: Tag) extends Table[ActionsRow](_tableTag, "actions") {
-    def * = (id, time, action, card, cardId, userId, matchId, createdAt, updatedAt) <> (ActionsRow.tupled, ActionsRow.unapply)
-    /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, time, action, card, cardId, userId, matchId, createdAt.?, updatedAt.?).shaped.<>({r=>import r._; _1.map(_=> ActionsRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8.get, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
-    
-    /** Database column id DBType(INT), AutoInc, PrimaryKey */
-    val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column time DBType(INT), Default(None) */
-    val time: Column[Option[Int]] = column[Option[Int]]("time", O.Default(None))
-    /** Database column action DBType(VARCHAR), Length(255,true), Default(None) */
-    val action: Column[Option[String]] = column[Option[String]]("action", O.Length(255,varying=true), O.Default(None))
-    /** Database column card DBType(VARCHAR), Length(255,true), Default(None) */
-    val card: Column[Option[String]] = column[Option[String]]("card", O.Length(255,varying=true), O.Default(None))
-    /** Database column card_id DBType(INT), Default(None) */
-    val cardId: Column[Option[Int]] = column[Option[Int]]("card_id", O.Default(None))
-    /** Database column user_id DBType(INT), Default(None) */
-    val userId: Column[Option[Int]] = column[Option[Int]]("user_id", O.Default(None))
-    /** Database column match_id DBType(INT), Default(None) */
-    val matchId: Column[Option[Int]] = column[Option[Int]]("match_id", O.Default(None))
-    /** Database column created_at DBType(DATETIME) */
-    val createdAt: Column[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
-    /** Database column updated_at DBType(DATETIME) */
-    val updatedAt: Column[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
-  }
-  /** Collection-like TableQuery object for table Actions */
-  lazy val Actions = new TableQuery(tag => new Actions(tag))
+  lazy val ddl = ActiveAdminComments.ddl ++ Activities.ddl ++ AdminUsers.ddl ++ Annoucements.ddl ++ Announcements.ddl ++ ArenaRunCards.ddl ++ ArenaRuns.ddl ++ Arenas.ddl ++ BlindDraftCards.ddl ++ BlindDrafts.ddl ++ CardMechanics.ddl ++ Cards.ddl ++ CardSets.ddl ++ Comments.ddl ++ Constructeds.ddl ++ Conversations.ddl ++ Decks.ddl ++ DeckVersions.ddl ++ DelayedJobs.ddl ++ Impressions.ddl ++ Klasses.ddl ++ MatchDecks.ddl ++ Matches.ddl ++ MatchRanks.ddl ++ MatchResults.ddl ++ MatchRuns.ddl ++ MatchUniqueDecks.ddl ++ Mechanics.ddl ++ Modes.ddl ++ Notifications.ddl ++ Patches.ddl ++ Profiles.ddl ++ Races.ddl ++ Ranks.ddl ++ Rarities.ddl ++ Receipts.ddl ++ Roles.ddl ++ SchemaMigrations.ddl ++ Seasons.ddl ++ Sessions.ddl ++ ShortenedUrls.ddl ++ Subscriptions.ddl ++ Taggings.ddl ++ Tags.ddl ++ Teams.ddl ++ TeamUsers.ddl ++ Tournaments.ddl ++ TournDecks.ddl ++ Tournies.ddl ++ TournMatches.ddl ++ TournPairs.ddl ++ TournUsers.ddl ++ Types.ddl ++ UniqueDeckCards.ddl ++ UniqueDecks.ddl ++ UniqueDeckTypes.ddl ++ Users.ddl ++ UsersRoles.ddl
   
   /** Entity class storing rows of table ActiveAdminComments
    *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
@@ -345,18 +301,19 @@ trait Tables {
    *  @param updatedAt Database column updated_at DBType(DATETIME)
    *  @param notes Database column notes DBType(TEXT), Length(65535,true), Default(None)
    *  @param patch Database column patch DBType(VARCHAR), Length(255,true), Default(Some(current))
-   *  @param klassId Database column klass_id DBType(INT), Default(None) */
-  case class ArenaRunsRow(id: Int, userId: Option[Int] = None, gold: Option[Int] = Some(0), dust: Option[Int] = Some(0), complete: Option[Boolean] = Some(false), createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, notes: Option[String] = None, patch: Option[String] = Some("current"), klassId: Option[Int] = None)
+   *  @param klassId Database column klass_id DBType(INT), Default(None)
+   *  @param deckId Database column deck_id DBType(INT), Default(None) */
+  case class ArenaRunsRow(id: Int, userId: Option[Int] = None, gold: Option[Int] = Some(0), dust: Option[Int] = Some(0), complete: Option[Boolean] = Some(false), createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, notes: Option[String] = None, patch: Option[String] = Some("current"), klassId: Option[Int] = None, deckId: Option[Int] = None)
   /** GetResult implicit for fetching ArenaRunsRow objects using plain SQL queries */
   implicit def GetResultArenaRunsRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[Boolean]], e3: GR[java.sql.Timestamp], e4: GR[Option[String]]): GR[ArenaRunsRow] = GR{
     prs => import prs._
-    ArenaRunsRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Boolean], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    ArenaRunsRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Boolean], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[Int]))
   }
   /** Table description of table arena_runs. Objects of this class serve as prototypes for rows in queries. */
   class ArenaRuns(_tableTag: Tag) extends Table[ArenaRunsRow](_tableTag, "arena_runs") {
-    def * = (id, userId, gold, dust, complete, createdAt, updatedAt, notes, patch, klassId) <> (ArenaRunsRow.tupled, ArenaRunsRow.unapply)
+    def * = (id, userId, gold, dust, complete, createdAt, updatedAt, notes, patch, klassId, deckId) <> (ArenaRunsRow.tupled, ArenaRunsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, userId, gold, dust, complete, createdAt.?, updatedAt.?, notes, patch, klassId).shaped.<>({r=>import r._; _1.map(_=> ArenaRunsRow.tupled((_1.get, _2, _3, _4, _5, _6.get, _7.get, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, userId, gold, dust, complete, createdAt.?, updatedAt.?, notes, patch, klassId, deckId).shaped.<>({r=>import r._; _1.map(_=> ArenaRunsRow.tupled((_1.get, _2, _3, _4, _5, _6.get, _7.get, _8, _9, _10, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id DBType(INT), AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -378,9 +335,13 @@ trait Tables {
     val patch: Column[Option[String]] = column[Option[String]]("patch", O.Length(255,varying=true), O.Default(Some("current")))
     /** Database column klass_id DBType(INT), Default(None) */
     val klassId: Column[Option[Int]] = column[Option[Int]]("klass_id", O.Default(None))
+    /** Database column deck_id DBType(INT), Default(None) */
+    val deckId: Column[Option[Int]] = column[Option[Int]]("deck_id", O.Default(None))
     
+    /** Index over (deckId) (database name index_arena_runs_on_deck_id) */
+    val index1 = index("index_arena_runs_on_deck_id", deckId)
     /** Index over (userId) (database name index_arena_runs_on_user_id) */
-    val index1 = index("index_arena_runs_on_user_id", userId)
+    val index2 = index("index_arena_runs_on_user_id", userId)
   }
   /** Collection-like TableQuery object for table ArenaRuns */
   lazy val ArenaRuns = new TableQuery(tag => new ArenaRuns(tag))
@@ -525,33 +486,57 @@ trait Tables {
   /** Collection-like TableQuery object for table BlindDrafts */
   lazy val BlindDrafts = new TableQuery(tag => new BlindDrafts(tag))
   
+  /** Entity class storing rows of table CardMechanics
+   *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
+   *  @param cardId Database column card_id DBType(INT), Default(None)
+   *  @param mechanicId Database column mechanic_id DBType(INT), Default(None) */
+  case class CardMechanicsRow(id: Int, cardId: Option[Int] = None, mechanicId: Option[Int] = None)
+  /** GetResult implicit for fetching CardMechanicsRow objects using plain SQL queries */
+  implicit def GetResultCardMechanicsRow(implicit e0: GR[Int], e1: GR[Option[Int]]): GR[CardMechanicsRow] = GR{
+    prs => import prs._
+    CardMechanicsRow.tupled((<<[Int], <<?[Int], <<?[Int]))
+  }
+  /** Table description of table card_mechanics. Objects of this class serve as prototypes for rows in queries. */
+  class CardMechanics(_tableTag: Tag) extends Table[CardMechanicsRow](_tableTag, "card_mechanics") {
+    def * = (id, cardId, mechanicId) <> (CardMechanicsRow.tupled, CardMechanicsRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (id.?, cardId, mechanicId).shaped.<>({r=>import r._; _1.map(_=> CardMechanicsRow.tupled((_1.get, _2, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    
+    /** Database column id DBType(INT), AutoInc, PrimaryKey */
+    val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column card_id DBType(INT), Default(None) */
+    val cardId: Column[Option[Int]] = column[Option[Int]]("card_id", O.Default(None))
+    /** Database column mechanic_id DBType(INT), Default(None) */
+    val mechanicId: Column[Option[Int]] = column[Option[Int]]("mechanic_id", O.Default(None))
+  }
+  /** Collection-like TableQuery object for table CardMechanics */
+  lazy val CardMechanics = new TableQuery(tag => new CardMechanics(tag))
+  
   /** Entity class storing rows of table Cards
    *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
    *  @param name Database column name DBType(VARCHAR), Length(255,true), Default(None)
    *  @param description Database column description DBType(VARCHAR), Length(255,true), Default(None)
    *  @param attack Database column attack DBType(INT), Default(None)
    *  @param health Database column health DBType(INT), Default(None)
-   *  @param cardSetId Database column card_set_id DBType(INT), Default(None)
    *  @param rarityId Database column rarity_id DBType(INT), Default(None)
-   *  @param typeId Database column type_id DBType(INT), Default(None)
    *  @param klassId Database column klass_id DBType(INT), Default(None)
-   *  @param raceId Database column race_id DBType(INT), Default(None)
    *  @param mana Database column mana DBType(INT), Default(None)
    *  @param collectible Database column collectible DBType(BIT), Default(None)
    *  @param patchId Database column patch_id DBType(INT), Default(None)
    *  @param blizzId Database column blizz_id DBType(VARCHAR), Length(255,true), Default(None)
-   *  @param race Database column race DBType(VARCHAR), Length(255,true), Default(None) */
-  case class CardsRow(id: Int, name: Option[String] = None, description: Option[String] = None, attack: Option[Int] = None, health: Option[Int] = None, cardSetId: Option[Int] = None, rarityId: Option[Int] = None, typeId: Option[Int] = None, klassId: Option[Int] = None, raceId: Option[Int] = None, mana: Option[Int] = None, collectible: Option[Boolean] = None, patchId: Option[Int] = None, blizzId: Option[String] = None, race: Option[String] = None)
+   *  @param cardSet Database column card_set DBType(VARCHAR), Length(255,true), Default(None)
+   *  @param typeName Database column type_name DBType(VARCHAR), Length(255,true), Default(None) */
+  case class CardsRow(id: Int, name: Option[String] = None, description: Option[String] = None, attack: Option[Int] = None, health: Option[Int] = None, rarityId: Option[Int] = None, klassId: Option[Int] = None, mana: Option[Int] = None, collectible: Option[Boolean] = None, patchId: Option[Int] = None, blizzId: Option[String] = None, cardSet: Option[String] = None, typeName: Option[String] = None)
   /** GetResult implicit for fetching CardsRow objects using plain SQL queries */
   implicit def GetResultCardsRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[Int]], e3: GR[Option[Boolean]]): GR[CardsRow] = GR{
     prs => import prs._
-    CardsRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Boolean], <<?[Int], <<?[String], <<?[String]))
+    CardsRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Boolean], <<?[Int], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table cards. Objects of this class serve as prototypes for rows in queries. */
   class Cards(_tableTag: Tag) extends Table[CardsRow](_tableTag, "cards") {
-    def * = (id, name, description, attack, health, cardSetId, rarityId, typeId, klassId, raceId, mana, collectible, patchId, blizzId, race) <> (CardsRow.tupled, CardsRow.unapply)
+    def * = (id, name, description, attack, health, rarityId, klassId, mana, collectible, patchId, blizzId, cardSet, typeName) <> (CardsRow.tupled, CardsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, name, description, attack, health, cardSetId, rarityId, typeId, klassId, raceId, mana, collectible, patchId, blizzId, race).shaped.<>({r=>import r._; _1.map(_=> CardsRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, name, description, attack, health, rarityId, klassId, mana, collectible, patchId, blizzId, cardSet, typeName).shaped.<>({r=>import r._; _1.map(_=> CardsRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id DBType(INT), AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -563,16 +548,10 @@ trait Tables {
     val attack: Column[Option[Int]] = column[Option[Int]]("attack", O.Default(None))
     /** Database column health DBType(INT), Default(None) */
     val health: Column[Option[Int]] = column[Option[Int]]("health", O.Default(None))
-    /** Database column card_set_id DBType(INT), Default(None) */
-    val cardSetId: Column[Option[Int]] = column[Option[Int]]("card_set_id", O.Default(None))
     /** Database column rarity_id DBType(INT), Default(None) */
     val rarityId: Column[Option[Int]] = column[Option[Int]]("rarity_id", O.Default(None))
-    /** Database column type_id DBType(INT), Default(None) */
-    val typeId: Column[Option[Int]] = column[Option[Int]]("type_id", O.Default(None))
     /** Database column klass_id DBType(INT), Default(None) */
     val klassId: Column[Option[Int]] = column[Option[Int]]("klass_id", O.Default(None))
-    /** Database column race_id DBType(INT), Default(None) */
-    val raceId: Column[Option[Int]] = column[Option[Int]]("race_id", O.Default(None))
     /** Database column mana DBType(INT), Default(None) */
     val mana: Column[Option[Int]] = column[Option[Int]]("mana", O.Default(None))
     /** Database column collectible DBType(BIT), Default(None) */
@@ -581,15 +560,15 @@ trait Tables {
     val patchId: Column[Option[Int]] = column[Option[Int]]("patch_id", O.Default(None))
     /** Database column blizz_id DBType(VARCHAR), Length(255,true), Default(None) */
     val blizzId: Column[Option[String]] = column[Option[String]]("blizz_id", O.Length(255,varying=true), O.Default(None))
-    /** Database column race DBType(VARCHAR), Length(255,true), Default(None) */
-    val race: Column[Option[String]] = column[Option[String]]("race", O.Length(255,varying=true), O.Default(None))
+    /** Database column card_set DBType(VARCHAR), Length(255,true), Default(None) */
+    val cardSet: Column[Option[String]] = column[Option[String]]("card_set", O.Length(255,varying=true), O.Default(None))
+    /** Database column type_name DBType(VARCHAR), Length(255,true), Default(None) */
+    val typeName: Column[Option[String]] = column[Option[String]]("type_name", O.Length(255,varying=true), O.Default(None))
     
     /** Index over (blizzId) (database name index_cards_on_blizz_id) */
     val index1 = index("index_cards_on_blizz_id", blizzId)
     /** Index over (name) (database name index_cards_on_name) */
     val index2 = index("index_cards_on_name", name)
-    /** Index over (typeId) (database name index_cards_on_type_id) */
-    val index3 = index("index_cards_on_type_id", typeId)
   }
   /** Collection-like TableQuery object for table Cards */
   lazy val Cards = new TableQuery(tag => new Cards(tag))
@@ -772,19 +751,19 @@ trait Tables {
    *  @param userNumLosses Database column user_num_losses DBType(INT), Default(None)
    *  @param userWinrate Database column user_winrate DBType(FLOAT), Default(None)
    *  @param isPublic Database column is_public DBType(BIT), Default(None)
-   *  @param isTournDeck Database column is_tourn_deck DBType(BIT), Default(Some(false))
-   *  @param archived Database column archived DBType(BIT), Default(Some(false)) */
-  case class DecksRow(id: Int, name: Option[String] = None, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, userId: Option[Int] = None, slug: Option[String] = None, notes: Option[String] = None, slot: Option[Int] = None, active: Option[Boolean] = None, klassId: Option[Int] = None, cardstring: Option[String] = None, uniqueDeckId: Option[Int] = None, userNumMatches: Option[Int] = None, userNumWins: Option[Int] = None, userNumLosses: Option[Int] = None, userWinrate: Option[Float] = None, isPublic: Option[Boolean] = None, isTournDeck: Option[Boolean] = Some(false), archived: Option[Boolean] = Some(false))
+   *  @param archived Database column archived DBType(BIT), Default(Some(false))
+   *  @param deckTypeId Database column deck_type_id DBType(INT), Default(Some(1)) */
+  case class DecksRow(id: Int, name: Option[String] = None, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, userId: Option[Int] = None, slug: Option[String] = None, notes: Option[String] = None, slot: Option[Int] = None, active: Option[Boolean] = None, klassId: Option[Int] = None, cardstring: Option[String] = None, uniqueDeckId: Option[Int] = None, userNumMatches: Option[Int] = None, userNumWins: Option[Int] = None, userNumLosses: Option[Int] = None, userWinrate: Option[Float] = None, isPublic: Option[Boolean] = None, archived: Option[Boolean] = Some(false), deckTypeId: Option[Int] = Some(1))
   /** GetResult implicit for fetching DecksRow objects using plain SQL queries */
   implicit def GetResultDecksRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[java.sql.Timestamp], e3: GR[Option[Int]], e4: GR[Option[Boolean]], e5: GR[Option[Float]]): GR[DecksRow] = GR{
     prs => import prs._
-    DecksRow.tupled((<<[Int], <<?[String], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[Boolean], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Float], <<?[Boolean], <<?[Boolean], <<?[Boolean]))
+    DecksRow.tupled((<<[Int], <<?[String], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[Boolean], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Float], <<?[Boolean], <<?[Boolean], <<?[Int]))
   }
   /** Table description of table decks. Objects of this class serve as prototypes for rows in queries. */
   class Decks(_tableTag: Tag) extends Table[DecksRow](_tableTag, "decks") {
-    def * = (id, name, createdAt, updatedAt, userId, slug, notes, slot, active, klassId, cardstring, uniqueDeckId, userNumMatches, userNumWins, userNumLosses, userWinrate, isPublic, isTournDeck, archived) <> (DecksRow.tupled, DecksRow.unapply)
+    def * = (id, name, createdAt, updatedAt, userId, slug, notes, slot, active, klassId, cardstring, uniqueDeckId, userNumMatches, userNumWins, userNumLosses, userWinrate, isPublic, archived, deckTypeId) <> (DecksRow.tupled, DecksRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, name, createdAt.?, updatedAt.?, userId, slug, notes, slot, active, klassId, cardstring, uniqueDeckId, userNumMatches, userNumWins, userNumLosses, userWinrate, isPublic, isTournDeck, archived).shaped.<>({r=>import r._; _1.map(_=> DecksRow.tupled((_1.get, _2, _3.get, _4.get, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, name, createdAt.?, updatedAt.?, userId, slug, notes, slot, active, klassId, cardstring, uniqueDeckId, userNumMatches, userNumWins, userNumLosses, userWinrate, isPublic, archived, deckTypeId).shaped.<>({r=>import r._; _1.map(_=> DecksRow.tupled((_1.get, _2, _3.get, _4.get, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id DBType(INT), AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -820,19 +799,21 @@ trait Tables {
     val userWinrate: Column[Option[Float]] = column[Option[Float]]("user_winrate", O.Default(None))
     /** Database column is_public DBType(BIT), Default(None) */
     val isPublic: Column[Option[Boolean]] = column[Option[Boolean]]("is_public", O.Default(None))
-    /** Database column is_tourn_deck DBType(BIT), Default(Some(false)) */
-    val isTournDeck: Column[Option[Boolean]] = column[Option[Boolean]]("is_tourn_deck", O.Default(Some(false)))
     /** Database column archived DBType(BIT), Default(Some(false)) */
     val archived: Column[Option[Boolean]] = column[Option[Boolean]]("archived", O.Default(Some(false)))
+    /** Database column deck_type_id DBType(INT), Default(Some(1)) */
+    val deckTypeId: Column[Option[Int]] = column[Option[Int]]("deck_type_id", O.Default(Some(1)))
     
+    /** Index over (deckTypeId) (database name index_decks_on_deck_type_id) */
+    val index1 = index("index_decks_on_deck_type_id", deckTypeId)
     /** Index over (klassId) (database name index_decks_on_klass_id) */
-    val index1 = index("index_decks_on_klass_id", klassId)
+    val index2 = index("index_decks_on_klass_id", klassId)
     /** Index over (slug) (database name index_decks_on_slug) */
-    val index2 = index("index_decks_on_slug", slug)
+    val index3 = index("index_decks_on_slug", slug)
     /** Index over (uniqueDeckId) (database name index_decks_on_unique_deck_id) */
-    val index3 = index("index_decks_on_unique_deck_id", uniqueDeckId)
+    val index4 = index("index_decks_on_unique_deck_id", uniqueDeckId)
     /** Index over (userId) (database name index_decks_on_user_id) */
-    val index4 = index("index_decks_on_user_id", userId)
+    val index5 = index("index_decks_on_user_id", userId)
   }
   /** Collection-like TableQuery object for table Decks */
   lazy val Decks = new TableQuery(tag => new Decks(tag))
@@ -1038,18 +1019,19 @@ trait Tables {
    *  @param deckId Database column deck_id DBType(INT), Default(None)
    *  @param matchId Database column match_id DBType(INT), Default(None)
    *  @param createdAt Database column created_at DBType(DATETIME)
-   *  @param updatedAt Database column updated_at DBType(DATETIME) */
-  case class MatchDecksRow(id: Int, deckId: Option[Int] = None, matchId: Option[Int] = None, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp)
+   *  @param updatedAt Database column updated_at DBType(DATETIME)
+   *  @param deckVersionId Database column deck_version_id DBType(INT), Default(None) */
+  case class MatchDecksRow(id: Int, deckId: Option[Int] = None, matchId: Option[Int] = None, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deckVersionId: Option[Int] = None)
   /** GetResult implicit for fetching MatchDecksRow objects using plain SQL queries */
   implicit def GetResultMatchDecksRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[java.sql.Timestamp]): GR[MatchDecksRow] = GR{
     prs => import prs._
-    MatchDecksRow.tupled((<<[Int], <<?[Int], <<?[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp]))
+    MatchDecksRow.tupled((<<[Int], <<?[Int], <<?[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[Int]))
   }
   /** Table description of table match_decks. Objects of this class serve as prototypes for rows in queries. */
   class MatchDecks(_tableTag: Tag) extends Table[MatchDecksRow](_tableTag, "match_decks") {
-    def * = (id, deckId, matchId, createdAt, updatedAt) <> (MatchDecksRow.tupled, MatchDecksRow.unapply)
+    def * = (id, deckId, matchId, createdAt, updatedAt, deckVersionId) <> (MatchDecksRow.tupled, MatchDecksRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, deckId, matchId, createdAt.?, updatedAt.?).shaped.<>({r=>import r._; _1.map(_=> MatchDecksRow.tupled((_1.get, _2, _3, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, deckId, matchId, createdAt.?, updatedAt.?, deckVersionId).shaped.<>({r=>import r._; _1.map(_=> MatchDecksRow.tupled((_1.get, _2, _3, _4.get, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id DBType(INT), AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -1061,11 +1043,15 @@ trait Tables {
     val createdAt: Column[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
     /** Database column updated_at DBType(DATETIME) */
     val updatedAt: Column[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
+    /** Database column deck_version_id DBType(INT), Default(None) */
+    val deckVersionId: Column[Option[Int]] = column[Option[Int]]("deck_version_id", O.Default(None))
     
     /** Index over (deckId) (database name index_match_decks_on_deck_id) */
     val index1 = index("index_match_decks_on_deck_id", deckId)
+    /** Index over (deckVersionId) (database name index_match_decks_on_deck_version_id) */
+    val index2 = index("index_match_decks_on_deck_version_id", deckVersionId)
     /** Index over (matchId) (database name index_match_decks_on_match_id) */
-    val index2 = index("index_match_decks_on_match_id", matchId)
+    val index3 = index("index_match_decks_on_match_id", matchId)
   }
   /** Collection-like TableQuery object for table MatchDecks */
   lazy val MatchDecks = new TableQuery(tag => new MatchDecks(tag))
@@ -1297,6 +1283,29 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table MatchUniqueDecks */
   lazy val MatchUniqueDecks = new TableQuery(tag => new MatchUniqueDecks(tag))
+  
+  /** Entity class storing rows of table Mechanics
+   *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
+   *  @param name Database column name DBType(VARCHAR), Length(255,true), Default(None) */
+  case class MechanicsRow(id: Int, name: Option[String] = None)
+  /** GetResult implicit for fetching MechanicsRow objects using plain SQL queries */
+  implicit def GetResultMechanicsRow(implicit e0: GR[Int], e1: GR[Option[String]]): GR[MechanicsRow] = GR{
+    prs => import prs._
+    MechanicsRow.tupled((<<[Int], <<?[String]))
+  }
+  /** Table description of table mechanics. Objects of this class serve as prototypes for rows in queries. */
+  class Mechanics(_tableTag: Tag) extends Table[MechanicsRow](_tableTag, "mechanics") {
+    def * = (id, name) <> (MechanicsRow.tupled, MechanicsRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (id.?, name).shaped.<>({r=>import r._; _1.map(_=> MechanicsRow.tupled((_1.get, _2)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    
+    /** Database column id DBType(INT), AutoInc, PrimaryKey */
+    val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column name DBType(VARCHAR), Length(255,true), Default(None) */
+    val name: Column[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Mechanics */
+  lazy val Mechanics = new TableQuery(tag => new Mechanics(tag))
   
   /** Entity class storing rows of table Modes
    *  @param id Database column id DBType(INT), AutoInc, PrimaryKey
