@@ -12,7 +12,7 @@ object ClusterDecks {
   def cluster(decks: Iterable[Deck]) {
     val distances = decks.toArray.map { deck1 => decks.toArray.map { _.distance(deck1) } }
 
-    println(distances.map(_.mkString(" | ")).mkString("\n"))
+//    println(distances.map(_.mkString(" | ")).mkString("\n"))
 
     val ids = for (d <- decks.toArray) yield d.url
 
@@ -23,6 +23,7 @@ object ClusterDecks {
       for ((card, count) <- cl.averageDeck(decks)) {
         println(f"$count%.1f  $card")
       }
+      println()
     }
     ShowClusters.show(distances, ids, 15)
   }
@@ -38,7 +39,7 @@ object ClusterDecks {
     def averageDeck(allDecks: Iterable[Deck]) = {
       def all(c: Cluster): List[Deck] =
         c.getChildren.toList.flatMap { ch =>
-          if (ch.isLeaf) allDecks.filter(_.name == ch.getName)
+          if (ch.isLeaf) allDecks.filter(_.url == ch.getName)
           else all(ch)
         }
 
