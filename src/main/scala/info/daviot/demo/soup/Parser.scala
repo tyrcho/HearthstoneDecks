@@ -2,10 +2,10 @@ package info.daviot.demo.soup
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
 import grizzled.slf4j.Logging
 import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.soup.hearthstone.{GosuGamersScraper, HsTopDecksScraper}
+import net.hearthstats.core.HeroClass
 //See http://stackoverflow.com/questions/14253515/use-dispatch-0-9-5-behind-proxy for proxy
 object Parser extends App with Logging {
 
@@ -19,6 +19,6 @@ object Parser extends App with Logging {
   val decks = (hstdDecks ++ ggDecks).groupBy(_.name).map(_._2.head) // remove duplicate names
   decks.foreach(println)
 
-  ClusterDecks.cluster(decks)
+  ClusterDecks.cluster(decks, HeroClass.DRUID)
 
 }
