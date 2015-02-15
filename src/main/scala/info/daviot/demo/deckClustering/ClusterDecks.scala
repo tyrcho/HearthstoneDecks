@@ -46,21 +46,19 @@ object ClusterDecks {
     def topClusters(maxDistance: Double): List[Cluster] = {
       val children = cluster.getChildren.toList
       if (cluster.getTotalDistance < maxDistance) List(cluster)
-      else if (children.forall { _.getTotalDistance > maxDistance }) children.flatMap(_.topClusters(maxDistance))
+      else if (children.forall { _.getTotalDistance >= maxDistance }) children.flatMap(_.topClusters(maxDistance))
       else children
     }
 
     lazy val weight: Int = decks.map(_.weight).sum
 
-    lazy val decks: List[Deck] =
-      cluster.getChildren.toList.flatMap { ch =>
-        if (ch.isLeaf) allDecks.filter(_.url == ch.getName)
-        else ch.decks
-      }
+    lazy val decks: Iterable[Deck] =
+      if (cluster.isLeaf) allDecks.filter(_.url == cluster.getName)
+      else cluster.getChildren.flatMap(_.decks)
 
     def averageDeck = {
       val decks = cluster.decks
-      val allCards = decks.flatMap(_.cards.map(_.name)).distinct
+      val allCards = decks.toList.flatMap(_.cards.map(_.name)).distinct
       val size = decks.size
       (for {
         card <- allCards

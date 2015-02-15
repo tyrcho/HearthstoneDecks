@@ -5,6 +5,7 @@ import com.mysql.jdbc.Driver
 import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.hearthstats.dao.DecksService
 import net.hearthstats.core.HeroClass
+import info.daviot.hearthstats.dao.MatchFilter
 
 object Connection extends App {
   val dbUrl = "jdbc:mysql://54.191.40.169:3306/hearthstats_production"
@@ -22,10 +23,11 @@ object Connection extends App {
       val decksService = new DecksService
       for {
         cl <- HeroClass.values.diff(List(HeroClass.UNDETECTED))
-        decks = decksService.decksForClass(
-          klassId = cl.ordinal,
-          minMatches = 10,
-          maxRows = 800)
+        decks = decksService.decks(MatchFilter(
+          cl.ordinal,
+          rankRange = 6 to 15,
+          includeLegend = false))
+        if decks.size > 0
       } ClusterDecks.cluster(decks, cl)
   }
 }

@@ -11,32 +11,32 @@ class DecksService(implicit session: Session) {
   val cardsService = new CardsService
   lazy val collectibleCards = cardsService.collectibleCards
 
-  def matchesInCurrentSeason(d: Decks, season: Int, rank: Int): Column[Int] = {
+  def matchesInCurrentSeason(d: Decks, mf: MatchFilter): Column[Int] = {
     val q = for {
       md <- MatchDecks
       if md.deckId === d.id
       m <- Matches
       if m.id === md.matchId
+      if m.seasonId === mf.season
       mr <- MatchRanks
       if mr.matchId === md.matchId
-      if mr.rankId <= rank
+      if (mr.rankId === 26 && mf.includeLegend) || (mr.rankId.between(mf.rankRange.start, mf.rankRange.end))
     } yield md.id
     q.size
   }
 
-  //for current season
-  def decksForClass(klassId: Int, minMatches: Int = 10, maxRows: Int = 1000): List[Deck] = {
+  def decks(mf: MatchFilter): List[Deck] = {
     val q = for {
       d <- Decks
-      if d.cardstring.nonEmpty && (d.cardstring =!= "")
+      if d.cardstring.nonEmpty && d.cardstring =!= ""
       if d.slug.nonEmpty
-      if d.klassId === klassId
-      m = matchesInCurrentSeason(d, season = 15, rank = 2)
-      if m >= minMatches
+      if d.klassId === mf.klassId
+      m = matchesInCurrentSeason(d, mf)
+      if m > 0
     } yield (d, m)
 
     for {
-      (d, m) <- q.sortBy(_._2.desc).take(maxRows).list
+      (d, m) <- q.sortBy(_._2.desc).take(mf.maxRows).list
     } yield Deck(
       d.name.getOrElse("undefined"),
       HeroClass.stringWithId(d.klassId.get),
@@ -62,3 +62,10 @@ class DecksService(implicit session: Session) {
   }.getOrElse(Nil)
 
 }
+
+case class MatchFilter(
+  klassId: Int,
+  season: Int = 15,
+  rankRange: Range = 1 to 5,
+  includeLegend: Boolean = true,
+  maxRows: Int = 750)
