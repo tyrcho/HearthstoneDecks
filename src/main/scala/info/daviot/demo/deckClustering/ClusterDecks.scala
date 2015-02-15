@@ -23,26 +23,26 @@ object ClusterDecks {
     new PrintWriter(bw)
   }
 
-  def cluster(decks: Iterable[Deck], klass: HeroClass) {
+  def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
     val writer = report(klass)
-    val distances = decks.toArray.map { deck1 => decks.toArray.map { _.distance(deck1) } }
+    val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
 
-    val ids = for (d <- decks.toArray) yield d.url
+    val ids = for (d <- allDecks.toArray) yield d.url
 
     val alg = new DefaultClusteringAlgorithm
     val cluster = alg.performClustering(distances, ids, new CompleteLinkageStrategy)
-    for (cl <- cluster.topClusters(15)) {
-      writer.println(cl.getName)
-      for ((card, count) <- cl.averageDeck(decks)) {
+    for (cl <- cluster.topClusters(10).sortBy(-_.weight)) {
+      writer.println(s"${cl.weight}) ${cl.getName}")
+      for ((card, count) <- cl.averageDeck) {
         writer.println(f"$count%.1f  $card")
       }
       writer.println()
     }
     writer.close()
-    ShowClusters.show(distances, ids, 15)
+    //    ShowClusters.show(distances, ids, 15)
   }
 
-  implicit class ClusterOp(cluster: Cluster) {
+  implicit class ClusterOp(cluster: Cluster)(implicit allDecks: Iterable[Deck]) {
     def topClusters(maxDistance: Double): List[Cluster] = {
       val children = cluster.getChildren.toList
       if (cluster.getTotalDistance < maxDistance) List(cluster)
@@ -50,21 +50,23 @@ object ClusterDecks {
       else children
     }
 
-    def averageDeck(allDecks: Iterable[Deck]) = {
-      def all(c: Cluster): List[Deck] =
-        c.getChildren.toList.flatMap { ch =>
-          if (ch.isLeaf) allDecks.filter(_.url == ch.getName)
-          else all(ch)
-        }
+    lazy val weight: Int = decks.map(_.weight).sum
 
-      val decks = all(cluster)
+    lazy val decks: List[Deck] =
+      cluster.getChildren.toList.flatMap { ch =>
+        if (ch.isLeaf) allDecks.filter(_.url == ch.getName)
+        else ch.decks
+      }
+
+    def averageDeck = {
+      val decks = cluster.decks
       val allCards = decks.flatMap(_.cards.map(_.name)).distinct
       val size = decks.size
       (for {
         card <- allCards
         sum = decks.map(_.cardsMap(card)).sum
         avg = sum / size.toFloat
-        if avg > 0.5
+        if avg > 0.35
       } yield {
         card -> avg
       }).sortBy(-_._2)

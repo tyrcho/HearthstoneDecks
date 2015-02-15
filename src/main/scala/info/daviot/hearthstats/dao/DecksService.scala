@@ -11,15 +11,17 @@ class DecksService(implicit session: Session) {
   val cardsService = new CardsService
   lazy val collectibleCards = cardsService.collectibleCards
 
-  def deckPlayedInCurrentSeason(d: Decks): Column[Boolean] = {
-    val beginMonth = DateTime.now.withDayOfMonth(1)
-    val bm = new Timestamp(beginMonth.millis.get)
+  def matchesInCurrentSeason(d: Decks, season: Int, rank: Int): Column[Int] = {
     val q = for {
-      m <- MatchDecks
-      if m.deckId === d.id
-      if m.createdAt > bm
-    } yield m.id
-    q.exists
+      md <- MatchDecks
+      if md.deckId === d.id
+      m <- Matches
+      if m.id === md.matchId
+      mr <- MatchRanks
+      if mr.matchId === md.matchId
+      if mr.rankId <= rank
+    } yield md.id
+    q.size
   }
 
   //for current season
@@ -29,28 +31,34 @@ class DecksService(implicit session: Session) {
       if d.cardstring.nonEmpty && (d.cardstring =!= "")
       if d.slug.nonEmpty
       if d.klassId === klassId
-      if d.userNumMatches > minMatches
-      if deckPlayedInCurrentSeason(d)
-    } yield d
+      m = matchesInCurrentSeason(d, season = 15, rank = 2)
+      if m >= minMatches
+    } yield (d, m)
 
     for {
-      d <- q.sortBy(_.userNumMatches.desc).take(maxRows).list
+      (d, m) <- q.sortBy(_._2.desc).take(maxRows).list
     } yield Deck(
       d.name.getOrElse("undefined"),
       HeroClass.stringWithId(d.klassId.get),
       cards(d),
-      d.slug.get)
+      d.slug.get,
+      m)
   }
 
   lazy val hsCardRe = """(\d+)_(\d)""".r
+  def cardFromString(s: String) =
+    s match {
+      case hsCardRe(name, count) =>
+        collectibleCards.get(name.toInt).map(c =>
+          Card(count.toInt, c.originalName))
+      case _ => None
+    }
+
   private def cards(d: DecksRow): List[Card] = d.cardstring.map { cs =>
     for {
       cardString <- cs.split(",").toList
-      parsed <- cardString match {
-        case hsCardRe(name, count) => Some(Card(count.toInt, collectibleCards(name.toInt).originalName))
-        case _                     => None
-      }
-    } yield parsed
+      card <- cardFromString(cardString)
+    } yield card
   }.getOrElse(Nil)
 
 }

@@ -1,6 +1,11 @@
 package info.daviot.cards
 
-case class Deck(name: String, hero: String, cards: List[Card], url: String) {
+case class Deck(
+  name: String,
+  hero: String,
+  cards: List[Card],
+  url: String,
+  weight: Int = 1) {
   //manhattan
   def distance(d: Deck): Double = {
     val keys = cardsMap.keySet ++ d.cardsMap.keySet

@@ -11,8 +11,6 @@ object Connection extends App {
   val user = "michel"
   val maxRows = 500
 
-  val klass=HeroClass.WARLOCK
-  
   val db = Database.forURL(
     url = dbUrl,
     driver = classOf[Driver].getName,
@@ -21,11 +19,13 @@ object Connection extends App {
 
   db.withSession {
     implicit session =>
-      val decksService=new DecksService
-      val decks = decksService.decksForClass(
-        klassId = klass.ordinal,
-        minMatches = 20,
-        maxRows = 300)
-      ClusterDecks.cluster(decks, klass)
+      val decksService = new DecksService
+      for {
+        cl <- HeroClass.values.diff(List(HeroClass.UNDETECTED))
+        decks = decksService.decksForClass(
+          klassId = cl.ordinal,
+          minMatches = 10,
+          maxRows = 800)
+      } ClusterDecks.cluster(decks, cl)
   }
 }
