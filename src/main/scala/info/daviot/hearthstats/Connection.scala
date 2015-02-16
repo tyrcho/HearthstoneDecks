@@ -8,7 +8,10 @@ import net.hearthstats.core.HeroClass
 import info.daviot.hearthstats.dao.MatchFilter
 
 object Connection extends App {
-  val dbUrl = "jdbc:mysql://54.191.40.169:3306/hearthstats_production"
+  val prodDB="hearthprod.cf7zalaj5nzl.us-west-2.rds.amazonaws.com"
+  val copyDB="54.191.40.169"
+  
+  val dbUrl = s"jdbc:mysql://$prodDB:3306/hearthstats_production"
   val user = "michel"
   val maxRows = 500
 

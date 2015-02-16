@@ -12,6 +12,7 @@ import java.nio.file.Files
 import net.hearthstats.core.HeroClass
 import java.io.BufferedWriter
 import java.io.PrintWriter
+import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
 
 object ClusterDecks {
   val reportFolder = Files.createTempDirectory("report")
@@ -26,11 +27,12 @@ object ClusterDecks {
   def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
     val writer = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
+    val weights = allDecks.toArray.map(_.weight.toDouble)
 
     val ids = for (d <- allDecks.toArray) yield d.url
 
     val alg = new DefaultClusteringAlgorithm
-    val cluster = alg.performClustering(distances, ids, new CompleteLinkageStrategy)
+    val cluster = alg.performWeightedClustering(distances, ids, weights, new WeightedLinkageStrategy)
     for (cl <- cluster.topClusters(10).sortBy(-_.weight)) {
       writer.println(s"${cl.weight}) ${cl.getName}")
       for ((card, count) <- cl.averageDeck) {
