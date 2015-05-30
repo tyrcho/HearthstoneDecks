@@ -34,7 +34,7 @@
 		<dependency>
 		<!--  https://github.com/HearthStats/HearthStats.net-Uploader/tree/dev/hearthstone -->
 			<groupId>net.hearthstats</groupId>
-			<version>0.21.1</version>
+			<version>0.22.0</version>
 			<artifactId>hearthstone</artifactId>
 		</dependency>
 		
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>com.apporiented</groupId>
 			<artifactId>hierarchical-clustering</artifactId>
-			<version>1.0.4-SNAPSHOT</version>
+			<version>1.1.0</version>
 		</dependency>
 
 		<dependency>
