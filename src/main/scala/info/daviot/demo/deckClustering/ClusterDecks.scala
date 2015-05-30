@@ -25,6 +25,7 @@ object ClusterDecks {
   }
 
   def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
+    val maxDist = 10
     val writer = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
     val weights = allDecks.toArray.map(_.weight.toDouble)
@@ -33,7 +34,7 @@ object ClusterDecks {
 
     val alg = new DefaultClusteringAlgorithm
     val cluster = alg.performWeightedClustering(distances, ids, weights, new WeightedLinkageStrategy)
-    for (cl <- cluster.topClusters(10).sortBy(-_.weight)) {
+    for (cl <- cluster.topClusters(maxDist).sortBy(-_.weight)) {
       writer.println(s"${cl.weight}) ${cl.getName}")
       for ((card, count) <- cl.averageDeck) {
         writer.println(f"$count%.1f  $card")
@@ -41,16 +42,18 @@ object ClusterDecks {
       writer.println()
     }
     writer.close()
-    //    ShowClusters.show(distances, ids, 15)
+    cluster.debug(30)
+    //    ShowClusters.show(distances, ids, maxDist)
   }
 
   implicit class ClusterOp(cluster: Cluster)(implicit allDecks: Iterable[Deck]) {
     def topClusters(maxDistance: Double): List[Cluster] = {
       val children = cluster.getChildren.toList
-      if (cluster.getTotalDistance < maxDistance) List(cluster)
-      else if (children.forall { _.getTotalDistance >= maxDistance }) children.flatMap(_.topClusters(maxDistance))
-      else children
+      if (cluster.distance < maxDistance) List(cluster)
+      else children.flatMap(_.topClusters(maxDistance))
     }
+
+    def distance = cluster.getDistance.getDistance
 
     lazy val weight: Int = decks.map(_.weight).sum
 
@@ -70,6 +73,16 @@ object ClusterDecks {
       } yield {
         card -> avg
       }).sortBy(-_._2)
+    }
+
+    def debug(maxDist: Double, indent: Int = 0) {
+      import cluster._
+      if (distance < maxDist) {
+        print("  " * indent)
+        val leaf = if (isLeaf) "(leaf)" else distance
+        println(s"$getName $leaf")
+      }
+      for (c <- getChildren) c.debug(maxDist, indent + 1)
     }
   }
 }

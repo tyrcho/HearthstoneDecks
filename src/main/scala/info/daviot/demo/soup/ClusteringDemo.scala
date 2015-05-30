@@ -9,6 +9,7 @@ import scala.util.Random
 import javax.tools.Diagnostic
 import com.apporiented.algorithm.clustering.Cluster
 import com.apporiented.algorithm.clustering.CompleteLinkageStrategy
+import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
 
 //see https://github.com/lbehnke/hierarchical-clustering-java
 object ClusteringDemo extends App {
@@ -25,8 +26,7 @@ object ShowClusters {
     val alg = new DefaultClusteringAlgorithm
 
     val start = System.nanoTime / 1000 / 1000
-    val cluster = alg.performClustering(distances, names, new CompleteLinkageStrategy)
-    cluster.debug(0, maxDist)
+    val cluster = alg.performClustering(distances, names, new WeightedLinkageStrategy)
     val end = System.nanoTime / 1000 / 1000
     val duration = end - start
     println(s"${names.size} in $duration ms")
@@ -41,15 +41,4 @@ object ShowClusters {
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   }
 
-  implicit class ClusterOp(cluster: Cluster) {
-    def debug(indent: Int = 0, maxDist: Double) {
-      import cluster._
-      if (getTotalDistance < maxDist) {
-        print("  " * indent)
-        val leaf = if (isLeaf) " (leaf)" else ""
-        println(s"$getName $leaf $getTotalDistance")
-      }
-      for (c <- getChildren) c.debug(indent + 1, maxDist)
-    }
-  }
 }
