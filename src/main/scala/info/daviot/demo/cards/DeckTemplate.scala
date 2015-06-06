@@ -2,17 +2,36 @@ package info.daviot.demo.cards
 
 import info.daviot.cards.Deck
 import info.daviot.cards.Card
+import net.hearthstats.core.CardData
 
 case class DeckTemplate(decks: Iterable[Deck]) {
 
-  def card(c: Card) =
+  def card(c: Card) = {
     s"""
 <tr>
-  <td> ${c.count} </td>
+  <td> ${c.count} x</td>
   <td class="cardname"> ${c.name} </td>
 </tr>  """
+  }
 
-  def cards(l: List[Card]) = s"<table>${(for (c <- l) yield card(c)).mkString("\n")}</table>"
+  implicit class CardOp(c: Card) {
+    def cost = CardData.collectible.find(_.name == c.name).flatMap(_.cost).get
+  }
+
+  def cardsByCost(l: List[Card]) = {
+    s"<table>${(for (c <- l) yield card(c)).mkString("\n")}</table>"
+  }
+
+  def cards(l: List[Card]) = {
+    (for {
+      (cost, cards) <- l.groupBy(_.cost).toList.sortBy(_._1)
+    } yield s"""
+      <tr>
+        <td><h1>$cost</h1></td>
+        <td>${cardsByCost(cards)}</td>
+      </tr>
+      """).mkString("<table>", "\n", "</table>")
+  }
 
   def deck(d: Deck) =
     s"""<h1>${d.name} (${d.weight})</h1>
@@ -26,7 +45,7 @@ case class DeckTemplate(decks: Iterable[Deck]) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
-  <title> - cards hover demo</title>
+  <title> ${decks.head.hero} </title>
   
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"> </script>
   
@@ -72,7 +91,7 @@ $$(document).mousemove(function(e) {
 <body>
 ${
       (for (d <- decks) yield deck(d)).mkString("\n")
-}
+    }
 </body>
 </html>  
 """

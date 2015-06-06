@@ -28,11 +28,11 @@ object ClusterDecks {
 
   def clusterToDeck(implicit allDecks: Iterable[Deck], c: Cluster, klass: HeroClass): Deck = {
     val cards = for ((card, count) <- c.averageDeck) yield Card((count * 10).toInt, card)
-    Deck(c.getName, klass.toString, cards.toList, "", c.weight)
+    Deck(c.name, klass.toString, cards.toList, "", c.weight)
   }
 
   def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
-    val maxDist = 6
+    val maxDist = 10
     val (file, writer) = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
     val weights = allDecks.toArray.map(_.weight.toDouble)
@@ -43,17 +43,11 @@ object ClusterDecks {
     val cluster = alg.performWeightedClustering(distances, ids, weights, new WeightedLinkageStrategy)
     val decks = for (cl <- cluster.topClusters(maxDist).sortBy(-_.weight))
       yield clusterToDeck(allDecks, cl, klass)
-    //      writer.println(s"${cl.weight}) ${cl.getName}")
-    //      for ((card, count) <- cl.averageDeck) {
-    //        writer.println(f"$count%.1f  $card")
-    //      }
-    //      writer.println()
 
     writer.println(DeckTemplate(decks).html)
     writer.close()
     Desktop.getDesktop.browse(file.toUri)
     cluster.debug(30)
-    //    ShowClusters.show(distances, ids, maxDist)
   }
 
   implicit class ClusterOp(cluster: Cluster)(implicit allDecks: Iterable[Deck]) {
@@ -70,6 +64,11 @@ object ClusterDecks {
     lazy val decks: Iterable[Deck] =
       if (cluster.isLeaf) allDecks.filter(_.url == cluster.getName)
       else cluster.getChildren.flatMap(_.decks)
+
+    def name: String = {
+      if (cluster.isLeaf) allDecks.filter(_.url == cluster.getName).head.name
+      else cluster.getChildren.head.name
+    }
 
     def averageDeck = {
       val decks = cluster.decks
