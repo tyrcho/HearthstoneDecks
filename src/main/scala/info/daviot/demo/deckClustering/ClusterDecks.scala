@@ -23,17 +23,17 @@ object ClusterDecks {
     val p = Files.createFile(reportFolder.resolve(s"$klass.html"))
     val bw = Files.newBufferedWriter(p)
     println(s"Writing report in $p")
-    (p,new PrintWriter(bw))
+    (p, new PrintWriter(bw))
   }
 
   def clusterToDeck(implicit allDecks: Iterable[Deck], c: Cluster, klass: HeroClass): Deck = {
-    val cards = for ((card, count) <- c.averageDeck) yield Card(count.toInt, card)
+    val cards = for ((card, count) <- c.averageDeck) yield Card((count * 10).toInt, card)
     Deck(c.getName, klass.toString, cards.toList, "", c.weight)
   }
 
   def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
     val maxDist = 6
-    val (file,writer) = report(klass)
+    val (file, writer) = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
     val weights = allDecks.toArray.map(_.weight.toDouble)
 

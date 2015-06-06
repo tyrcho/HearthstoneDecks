@@ -8,7 +8,7 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   def card(c: Card) =
     s"""
 <tr>
-  <td> ${c.count} x </td>
+  <td> ${c.count} </td>
   <td class="cardname"> ${c.name} </td>
 </tr>  """
 
