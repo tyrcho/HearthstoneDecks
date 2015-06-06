@@ -13,6 +13,7 @@ class DispatchUrlReader extends Reader[String, String] with Logging {
     val svc = url(urlStr)
     val read = () => Http(svc.OK(as.String)).option
 
+    //see http://www.bimeanalytics.com/engineering-blog/retrying-http-request-in-scala/
     for (data <- retry.Backoff()(read))
       yield data.getOrElse(s"ERROR reading $urlStr")
   }

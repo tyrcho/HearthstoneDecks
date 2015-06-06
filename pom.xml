@@ -34,7 +34,7 @@
 		<dependency>
 		<!--  https://github.com/HearthStats/HearthStats.net-Uploader/tree/dev/hearthstone -->
 			<groupId>net.hearthstats</groupId>
-			<version>0.22.0</version>
+			<version>0.22.4</version>
 			<artifactId>hearthstone</artifactId>
 		</dependency>
 		
