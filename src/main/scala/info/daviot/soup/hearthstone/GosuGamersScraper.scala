@@ -54,6 +54,7 @@ object GgLinksParser extends LinksParser[String] with JsoupParser {
       link <- doc.getElementsByAttributeValueMatching("href", "/hearthstone/decks[?/]").toList
       href = link.attr("href")
       if keepPage(href) && !href.contains("sort=")
-    } yield "http://www.gosugamers.net" + href).distinct
+    } yield if (href.startsWith("http://www.gosugamers.net")) href
+    else "http://www.gosugamers.net" + href).distinct
 
 }
