@@ -6,27 +6,34 @@ import com.apporiented.algorithm.clustering.DefaultClusteringAlgorithm
 import com.apporiented.algorithm.clustering.CompleteLinkageStrategy
 import scala.collection.JavaConversions._
 import com.apporiented.algorithm.clustering.Cluster
-import com.apporiented.algorithm.clustering.Cluster
 import java.io.File
 import java.nio.file.Files
 import net.hearthstats.core.HeroClass
 import java.io.BufferedWriter
 import java.io.PrintWriter
 import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
+import info.daviot.demo.cards.DeckTemplate
+import info.daviot.cards.Card
+import java.awt.Desktop
 
 object ClusterDecks {
   val reportFolder = Files.createTempDirectory("report")
 
-  def report(klass: HeroClass): PrintWriter = {
-    val p = Files.createFile(reportFolder.resolve(s"$klass.txt"))
+  def report(klass: HeroClass) = {
+    val p = Files.createFile(reportFolder.resolve(s"$klass.html"))
     val bw = Files.newBufferedWriter(p)
     println(s"Writing report in $p")
-    new PrintWriter(bw)
+    (p,new PrintWriter(bw))
+  }
+
+  def clusterToDeck(implicit allDecks: Iterable[Deck], c: Cluster, klass: HeroClass): Deck = {
+    val cards = for ((card, count) <- c.averageDeck) yield Card(count.toInt, card)
+    Deck(c.getName, klass.toString, cards.toList, "", c.weight)
   }
 
   def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
-    val maxDist = 10
-    val writer = report(klass)
+    val maxDist = 6
+    val (file,writer) = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
     val weights = allDecks.toArray.map(_.weight.toDouble)
 
@@ -34,14 +41,17 @@ object ClusterDecks {
 
     val alg = new DefaultClusteringAlgorithm
     val cluster = alg.performWeightedClustering(distances, ids, weights, new WeightedLinkageStrategy)
-    for (cl <- cluster.topClusters(maxDist).sortBy(-_.weight)) {
-      writer.println(s"${cl.weight}) ${cl.getName}")
-      for ((card, count) <- cl.averageDeck) {
-        writer.println(f"$count%.1f  $card")
-      }
-      writer.println()
-    }
+    val decks = for (cl <- cluster.topClusters(maxDist).sortBy(-_.weight))
+      yield clusterToDeck(allDecks, cl, klass)
+    //      writer.println(s"${cl.weight}) ${cl.getName}")
+    //      for ((card, count) <- cl.averageDeck) {
+    //        writer.println(f"$count%.1f  $card")
+    //      }
+    //      writer.println()
+
+    writer.println(DeckTemplate(decks).html)
     writer.close()
+    Desktop.getDesktop.browse(file.toUri)
     cluster.debug(30)
     //    ShowClusters.show(distances, ids, maxDist)
   }
