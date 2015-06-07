@@ -22,6 +22,6 @@ object Parser extends App with Logging {
   for {
     cl <- HeroClass.values.toSet - HeroClass.UNDETECTED
     decks = hstdDecks.filter(_.hero == cl.toString)
-  } ClusterDecks.cluster(decks, cl)
+  } ClusterDecks(decks).cluster(cl)
 
 }

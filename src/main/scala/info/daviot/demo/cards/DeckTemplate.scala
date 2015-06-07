@@ -3,8 +3,25 @@ package info.daviot.demo.cards
 import info.daviot.cards.Deck
 import info.daviot.cards.Card
 import net.hearthstats.core.CardData
+import info.daviot.search.TfIdf
 
 case class DeckTemplate(decks: Iterable[Deck]) {
+  def deckNameWords(d: Deck) =
+    for {
+      word <- d.name.split("\\W").toList
+      if (word.size > 2)
+      if word.matches(".*\\w.*")
+    } yield word.trim
+
+  val tfIdf = TfIdf(decks.map(deckNameWords).toList)
+
+  def deckName(d: Deck) = {
+    val wordsWithCopies = deckNameWords(d).groupBy(identity).toList
+    val ordered = wordsWithCopies.sortBy {
+      case (word, copies) => copies.size * tfIdf.idf(word)
+    }
+    ordered.map(_._1).reverse.take(3).mkString(" ")
+  }
 
   def card(c: Card) = {
     s"""
@@ -34,7 +51,7 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   }
 
   def deck(d: Deck) =
-    s"""<h1>${d.name} (${d.weight})</h1>
+    s"""<h1>${deckName(d)} (${d.weight})</h1>
       ${cards(d.cards)}
       """
 

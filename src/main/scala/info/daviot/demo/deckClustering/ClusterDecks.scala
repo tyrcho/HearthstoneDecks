@@ -16,7 +16,7 @@ import info.daviot.demo.cards.DeckTemplate
 import info.daviot.cards.Card
 import java.awt.Desktop
 
-object ClusterDecks {
+case class ClusterDecks(allDecks: Iterable[Deck]) {
   val reportFolder = Files.createTempDirectory("report")
 
   def report(klass: HeroClass) = {
@@ -26,12 +26,12 @@ object ClusterDecks {
     (p, new PrintWriter(bw))
   }
 
-  def clusterToDeck(implicit allDecks: Iterable[Deck], c: Cluster, klass: HeroClass): Deck = {
+  def clusterToDeck(c: Cluster, klass: HeroClass): Deck = {
     val cards = for ((card, count) <- c.averageDeck) yield Card((count * 10).toInt, card)
     Deck(c.name, klass.toString, cards.toList, "", c.weight)
   }
 
-  def cluster(implicit allDecks: Iterable[Deck], klass: HeroClass) {
+  def cluster(klass: HeroClass) {
     val maxDist = 10
     val (file, writer) = report(klass)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
@@ -42,7 +42,7 @@ object ClusterDecks {
     val alg = new DefaultClusteringAlgorithm
     val cluster = alg.performWeightedClustering(distances, ids, weights, new WeightedLinkageStrategy)
     val decks = for (cl <- cluster.topClusters(maxDist).sortBy(-_.weight))
-      yield clusterToDeck(allDecks, cl, klass)
+      yield clusterToDeck(cl, klass)
 
     writer.println(DeckTemplate(decks).html)
     writer.close()
@@ -50,7 +50,7 @@ object ClusterDecks {
     cluster.debug(30)
   }
 
-  implicit class ClusterOp(cluster: Cluster)(implicit allDecks: Iterable[Deck]) {
+  implicit class ClusterOp(cluster: Cluster) {
     def topClusters(maxDistance: Double): List[Cluster] = {
       val children = cluster.getChildren.toList
       if (cluster.distance < maxDistance) List(cluster)
@@ -67,7 +67,7 @@ object ClusterDecks {
 
     def name: String = {
       if (cluster.isLeaf) allDecks.filter(_.url == cluster.getName).head.name
-      else cluster.getChildren.head.name
+      else cluster.getChildren.map(_.name).mkString(" ")
     }
 
     def averageDeck = {
