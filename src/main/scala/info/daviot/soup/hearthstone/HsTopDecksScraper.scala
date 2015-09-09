@@ -41,8 +41,8 @@ object HstdDataParser extends DataParser[String, Deck] with JsoupParser {
   def extract(id: String, content: String): Future[Option[Deck]] = for {
     doc <- parseDocument(content)
   } yield for {
-    cl <- doc.select("span.deck-info").headOption
-    c = cl.text.replaceAll("Class:", "").replaceAll("- Type.*", "").trim
+    cl <- doc.select("div.deck-info").headOption
+    c = cl.select("a").head.text
     cards = doc.select("a.card-frame")
   } yield Deck(doc.title, c, parseCards(cards).toList, id)
 }

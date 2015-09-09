@@ -18,7 +18,7 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   def deckName(d: Deck) = {
     val wordsWithCopies = deckNameWords(d).groupBy(identity).toList
     val ordered = wordsWithCopies.sortBy {
-      case (word, copies) => copies.size * tfIdf.idf(word)
+      case (word, copies) => (copies.size * tfIdf.idf(word), word.size)
     }
     ordered.map(_._1).reverse.take(3).mkString(" ")
   }
@@ -65,15 +65,15 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   <title> ${decks.head.hero} </title>
   
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"> </script>
-  
+
   
   <style type="text/css">
 #image{
   position:absolute;
 }
   </style>
-  
- 
+
+
  
 <script type="text/javascript">//<![CDATA[ 
 $$(window).load(function(){
@@ -102,7 +102,7 @@ $$(document).mousemove(function(e) {
 
 });
 //]]> </script>
- 
+
  
 </head>
 <body>

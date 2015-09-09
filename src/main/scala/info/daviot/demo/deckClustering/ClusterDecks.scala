@@ -21,7 +21,7 @@ case class ClusterDecks(allDecks: Iterable[Deck]) {
   val reportFolder = Files.createTempDirectory("report")
 
   private def report(klass: HeroClass) = {
-    val p = Files.createFile(reportFolder.resolve(s"$klass.txt"))
+    val p = Files.createFile(reportFolder.resolve(s"$klass.html"))
     val bw = Files.newBufferedWriter(p, Charset.defaultCharset)
     println(s"Writing report in $p")
     (p, new PrintWriter(bw))
