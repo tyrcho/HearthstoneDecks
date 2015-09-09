@@ -56,33 +56,46 @@ abstract class Scraper[Id, Data](
   })
 
   val orchestrator: ActorRef = actor(new Act {
+
+    def status() {
+      info(s"waiting : ${waiting.size} - done : ${data.size}")
+    }
+
     var data = Map.empty[Id, Data]
     var waiting = Set.empty[Id]
+    var done = Set.empty[Id]
     var client: ActorRef = _
     become {
       case Start(ids) =>
         data = Map.empty
         waiting = Set.empty
+        done = Set.empty
         client = sender
         for (id <- ids) {
           self ! Collect(id)
         }
 
-      case Collect(id) => if (data.contains(id) || waiting.contains(id)) {
-        debug(s"$id already processed or processing")
-      } else {
-        debug(s"processing : $id")
-        waiting += id
-        reader ! Collect(id)
-      }
+      case Collect(id) =>
+        if (done.contains(id) || waiting.contains(id)) {
+          debug(s"$id already processed or processing")
+          self ! Done(id)
+        } else {
+          status()
+          info(s"processing : $id")
+          waiting += id
+          reader ! Collect(id)
+        }
 
       case DataFound(id, d) =>
-        debug(s"data recorded for $id")
+        status()
+        info(s"data recorded for $id")
         data += id -> d
 
       case Done(id) =>
-        debug(s"finished : $id")
+        status()
+        info(s"finished : $id")
         waiting -= id
+        done += id
         if (waiting.isEmpty) {
           client ! data
         }
