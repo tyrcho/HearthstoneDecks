@@ -12,13 +12,14 @@ import java.nio.file.Files
 import net.hearthstats.core.HeroClass
 import java.io.BufferedWriter
 import java.io.PrintWriter
+import java.nio.charset.Charset
 
 object ClusterDecks {
   val reportFolder = Files.createTempDirectory("report")
 
-  def report(klass: HeroClass): PrintWriter = {
+  private def report(klass: HeroClass): PrintWriter = {
     val p = Files.createFile(reportFolder.resolve(s"$klass.txt"))
-    val bw = Files.newBufferedWriter(p)
+    val bw = Files.newBufferedWriter(p, Charset.defaultCharset)
     println(s"Writing report in $p")
     new PrintWriter(bw)
   }
