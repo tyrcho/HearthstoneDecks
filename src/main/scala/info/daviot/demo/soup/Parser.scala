@@ -13,7 +13,13 @@ object Parser extends App with Logging {
   //  val ggScraper = new GosuGamersScraper(Seq("http://www.gosugamers.net/hearthstone/decks?name=&textMode=0&filter=Filter&class=13"), cacheFolder)
   //  val ggDecks = Await.result(ggScraper.collectedData, 1000.seconds).values
 
-  val hstdScraper = new HsTopDecksScraper(Seq("http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-17/","http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-18/"), cacheFolder, "14")
+  val hstdScraper = new HsTopDecksScraper(
+    Seq(
+      "http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-18/",
+      "http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-19/",
+      "http://www.hearthstonetopdecks.com/deck-category/constructed-seasons/season-20/"),
+    cacheFolder,
+    18, 19, 20)
   val hstdDecks = Await.result(hstdScraper.collectedData, 1000.seconds).values
 
   val decks = (hstdDecks).groupBy(_.name).map(_._2.head) // remove duplicate names

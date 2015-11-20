@@ -19,11 +19,11 @@ import info.daviot.cards.Card
 class HsTopDecksScraper(
   val initial: Iterable[String],
   cacheFolder: String,
-  season: String)
-  extends DispatchJsoupScraper[Deck](
-    HstdDataParser,
-    new HstdLinksParser(season),
-    cacheFolder)
+  seasons: Int*)
+    extends DispatchJsoupScraper[Deck](
+      HstdDataParser,
+      new HstdLinksParser(seasons: _*),
+      cacheFolder)
 
 object HstdDataParser extends DataParser[String, Deck] with JsoupParser {
   def parseCards(content: Element) = for {
@@ -47,13 +47,14 @@ object HstdDataParser extends DataParser[String, Deck] with JsoupParser {
   } yield Deck(doc.title, c, parseCards(cards).toList, id)
 }
 
-class HstdLinksParser(season: String) extends LinksParser[String] with JsoupParser {
+class HstdLinksParser(seasons: Int*) extends LinksParser[String] with JsoupParser {
   def extract(id: String, content: String): Future[List[String]] =
     for {
       doc <- parseDocument(content)
+      seasonStrings = seasons.map(s => s"http://www.hearthstonetopdecks.com/deck-category/.*/season-$s/page/").mkString("|")
     } yield (for {
-      link <- doc.getElementsByAttributeValueMatching("href",
-        s"(http://www.hearthstonetopdecks.com/decks/|http://www.hearthstonetopdecks.com/deck-category/.*/season-$season/page/)").toList
+      link <- doc.getElementsByAttributeValueMatching(
+        "href", s"(http://www.hearthstonetopdecks.com/decks/|$seasonStrings)").toList
       if !id.contains("/decks/") // do not follow links from deck page
     } yield link.attr("href")).distinct
 }

@@ -32,7 +32,7 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   }
 
   implicit class CardOp(c: Card) {
-    def cost = CardData.collectible.find(_.name == c.name).flatMap(_.cost).get
+    def cost = CardData.collectible.find(_.name == c.name).flatMap(_.cost).getOrElse(0)
   }
 
   def cardsByCost(l: List[Card]) = {
@@ -65,15 +65,12 @@ case class DeckTemplate(decks: Iterable[Deck]) {
   <title> ${decks.head.hero} </title>
   
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"> </script>
-
   
   <style type="text/css">
 #image{
   position:absolute;
 }
   </style>
-
-
  
 <script type="text/javascript">//<![CDATA[ 
 $$(window).load(function(){
@@ -102,7 +99,6 @@ $$(document).mousemove(function(e) {
 
 });
 //]]> </script>
-
  
 </head>
 <body>
