@@ -6,6 +6,7 @@ import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.hearthstats.dao.DecksService
 import net.hearthstats.core.HeroClass
 import info.daviot.hearthstats.dao.MatchFilter
+import java.nio.file.Files
 
 object Connection extends App {
   val prodDB = "hearthprod.cf7zalaj5nzl.us-west-2.rds.amazonaws.com"
@@ -24,6 +25,8 @@ object Connection extends App {
   db.withSession {
     implicit session =>
       val decksService = new DecksService
+      val reportFolder = Files.createTempDirectory("report")
+
       for {
         cl <- HeroClass.values.diff(List(HeroClass.UNDETECTED))
         decks = decksService.decks(MatchFilter(
@@ -31,6 +34,6 @@ object Connection extends App {
           rankRange = 6 to 15,
           includeLegend = false))
         if decks.size > 0
-      } ClusterDecks(decks).cluster(cl)
+      } ClusterDecks(decks).cluster(cl, reportFolder)
   }
 }

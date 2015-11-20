@@ -16,11 +16,10 @@ import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
 import info.daviot.demo.cards.DeckTemplate
 import info.daviot.cards.Card
 import java.awt.Desktop
+import java.nio.file.Path
 
 case class ClusterDecks(allDecks: Iterable[Deck]) {
-  val reportFolder = Files.createTempDirectory("report")
-
-  private def report(klass: HeroClass) = {
+  private def report(klass: HeroClass, reportFolder: Path) = {
     val p = Files.createFile(reportFolder.resolve(s"$klass.html"))
     val bw = Files.newBufferedWriter(p, Charset.defaultCharset)
     println(s"Writing report in $p")
@@ -32,9 +31,9 @@ case class ClusterDecks(allDecks: Iterable[Deck]) {
     Deck(c.name, klass.toString, cards.toList, "", c.weight)
   }
 
-  def cluster(klass: HeroClass) {
+  def cluster(klass: HeroClass, reportFolder: Path) {
     val maxDist = 10
-    val (file, writer) = report(klass)
+    val (file, writer) = report(klass, reportFolder)
     val distances = allDecks.toArray.map { deck1 => allDecks.toArray.map { _.distance(deck1) } }
     val weights = allDecks.toArray.map(_.weight.toDouble)
 

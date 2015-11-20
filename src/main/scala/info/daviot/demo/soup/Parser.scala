@@ -6,6 +6,7 @@ import grizzled.slf4j.Logging
 import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.soup.hearthstone.{ GosuGamersScraper, HsTopDecksScraper }
 import net.hearthstats.core.HeroClass
+import java.nio.file.Files
 //See http://stackoverflow.com/questions/14253515/use-dispatch-0-9-5-behind-proxy for proxy
 object Parser extends App with Logging {
 
@@ -25,9 +26,10 @@ object Parser extends App with Logging {
   val decks = (hstdDecks).groupBy(_.name).map(_._2.head) // remove duplicate names
   decks.foreach(println)
 
+  val reportFolder = Files.createTempDirectory("report")
   for {
     cl <- HeroClass.values.toSet - HeroClass.UNDETECTED
     decks = hstdDecks.filter(_.hero == cl.toString)
-  } ClusterDecks(decks).cluster(cl)
+  } ClusterDecks(decks).cluster(cl, reportFolder)
 
 }
