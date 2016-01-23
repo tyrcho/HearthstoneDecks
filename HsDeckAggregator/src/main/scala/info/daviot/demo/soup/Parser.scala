@@ -1,14 +1,12 @@
 package info.daviot.demo.soup
 
 import java.nio.file.Files
-
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
 import grizzled.slf4j.Logging
-import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.demo.deckClustering.HeroClass
 import info.daviot.soup.hearthstone.HsTopDecksScraper
+import info.daviot.demo.deckClustering.ClusterDecks
 //See http://stackoverflow.com/questions/14253515/use-dispatch-0-9-5-behind-proxy for proxy
 object Parser extends App with Logging {
 

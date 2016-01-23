@@ -18,7 +18,7 @@ case class CardData(
   mechanics: Option[List[String]])
 
 object CardData {
-  val is = getClass.getResourceAsStream("cards.json")
+  val is = getClass.getClassLoader.getResourceAsStream("cards.json")
   lazy val json = Json.parse(io.Source.fromInputStream(is, "UTF-8").getLines.mkString).as[List[CardData]]
 
   lazy val allCards: List[CardData] =
@@ -36,6 +36,6 @@ object CardData {
 
 }
 
-object CardDataDemo extends App{
+object CardDataDemo extends App {
   CardData.collectible.take(10).foreach(println)
 }
