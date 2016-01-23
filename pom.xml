@@ -31,13 +31,7 @@
 		</dependency>
 
 
-		<dependency>
-		<!--  https://github.com/HearthStats/HearthStats.net-Uploader/tree/dev/hearthstone -->
-			<groupId>net.hearthstats</groupId>
-			<version>0.22.0-SNAPSHOT</version>
-			<artifactId>hearthstone</artifactId>
-		</dependency>
-		
+
 		<dependency>
 			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
 			<groupId>net.databinder.dispatch</groupId>

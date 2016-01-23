@@ -2,10 +2,10 @@ package info.daviot.hearthstats.dao
 
 import scala.slick.driver.MySQLDriver.simple._
 import info.daviot.cards._
-import net.hearthstats.core.HeroClass
 import info.daviot.hearthstats.model.Tables._
 import com.github.nscala_time.time.Imports._
 import java.sql.Timestamp
+import info.daviot.demo.deckClustering.HeroClass
 
 class DecksService(implicit session: Session) {
   val cardsService = new CardsService

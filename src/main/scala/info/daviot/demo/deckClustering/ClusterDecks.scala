@@ -1,22 +1,20 @@
 package info.daviot.demo.deckClustering
 
-import info.daviot.cards.Deck
-import info.daviot.demo.soup.ShowClusters
-import com.apporiented.algorithm.clustering.DefaultClusteringAlgorithm
-import com.apporiented.algorithm.clustering.CompleteLinkageStrategy
-import scala.collection.JavaConversions._
-import com.apporiented.algorithm.clustering.Cluster
-import java.io.File
-import java.nio.file.Files
-import net.hearthstats.core.HeroClass
-import java.io.BufferedWriter
+import java.awt.Desktop
 import java.io.PrintWriter
 import java.nio.charset.Charset
-import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
-import info.daviot.demo.cards.DeckTemplate
-import info.daviot.cards.Card
-import java.awt.Desktop
+import java.nio.file.Files
 import java.nio.file.Path
+
+import scala.collection.JavaConversions.asScalaBuffer
+
+import com.apporiented.algorithm.clustering.Cluster
+import com.apporiented.algorithm.clustering.DefaultClusteringAlgorithm
+import com.apporiented.algorithm.clustering.WeightedLinkageStrategy
+
+import info.daviot.cards.Card
+import info.daviot.cards.Deck
+import info.daviot.demo.cards.DeckTemplate
 
 case class ClusterDecks(allDecks: Iterable[Deck]) {
   private def report(klass: HeroClass, reportFolder: Path) = {

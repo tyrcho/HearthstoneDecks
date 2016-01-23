@@ -2,7 +2,7 @@ package info.daviot.demo.cards
 
 import info.daviot.cards.Deck
 import info.daviot.cards.Card
-import net.hearthstats.core.CardData
+import info.daviot.cards.CardData
 import info.daviot.search.TfIdf
 
 case class DeckTemplate(decks: Iterable[Deck]) {

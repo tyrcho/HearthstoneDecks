@@ -4,9 +4,9 @@ import scala.slick.driver.MySQLDriver.simple.Database
 import com.mysql.jdbc.Driver
 import info.daviot.demo.deckClustering.ClusterDecks
 import info.daviot.hearthstats.dao.DecksService
-import net.hearthstats.core.HeroClass
 import info.daviot.hearthstats.dao.MatchFilter
 import java.nio.file.Files
+import info.daviot.demo.deckClustering.HeroClass
 
 object Connection extends App {
   val prodDB = "hearthprod.cf7zalaj5nzl.us-west-2.rds.amazonaws.com"
